@@ -7,7 +7,7 @@
     <application uri="rtmp://HOST/bigbluebutton" host="http://HOST/bigbluebutton/api/enter" />
     <language userSelectionEnabled="true" />
     <skinning enabled="false" url="branding/css/theme.css.swf" />
-    <layout showLogButton="false" showVideoLayout="false" showResetLayout="true" showToolbar="true" showHelpButton="true" showLogoutWindow="true"/>
+    <layout showLogButton="true" showVideoLayout="false" showResetLayout="true" showToolbar="true" showHelpButton="true" showLogoutWindow="true"/>
     
 	<modules>
 		
@@ -95,6 +95,11 @@
 			oneAlwaysBigger="false"
 		/>
 		
+		<module name="PollingModule" url="PollingModule.swf?v=3809" 
+			uri="rtmp://142.204.133.24/bigbluebutton" 
+			host="http://142.204.133.24" 
+			dependsOn="ViewersModule"
+		/>
 		<!-- new module in development: 
 		<module name="DynamicInfoModule" url="DynamicInfoModule.swf?v=VERSION" 
 			uri="rtmp://HOST/bigbluebutton" 

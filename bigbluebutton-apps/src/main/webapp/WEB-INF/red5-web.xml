@@ -35,6 +35,8 @@
 				<ref bean="presentationHandler" />
 				<ref bean="voiceHandler" />
 				<ref bean="whiteboardApplication" />
+				<ref bean="pollHandler" /> 
+				
     		</set>
   		</property>	  
   		<property name="recorderApplication"> <ref bean="recorderApplication"/></property>	
