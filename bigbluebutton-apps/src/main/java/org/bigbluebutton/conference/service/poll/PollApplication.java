@@ -38,7 +38,6 @@ import org.bigbluebutton.conference.service.recorder.polling.PollInvoker;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-
 public class PollApplication {
 
 	private static Logger log = Red5LoggerFactory.getLogger( PollApplication.class, "bigbluebutton" );	
@@ -48,8 +47,8 @@ public class PollApplication {
 	private String CURRENTKEY = "bbb-polling-webID";
 	private Integer MAX_WEBKEYS	= 9999;
 	private Integer MIN_WEBKEYS	= 1000;
-	private String BBB_FILE = "/var/lib/tomcat6/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties";
-	private String BBB_SERVER_FIELD = "bigbluebutton.web.serverURL";
+	private static String BBB_FILE = "/var/lib/tomcat6/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties";
+	private static String BBB_SERVER_FIELD = "bigbluebutton.web.serverURL";
 	
 	public PollHandler handler;
 	
@@ -64,21 +63,7 @@ public class PollApplication {
 		destroyPolls(name);
 		return true;
 	}
-	
-	// About to change dbConnect entirely, but if you can see this again you're back to normal.
-	public Jedis dbConnect(){
-		try{
-			String serverIP = getLocalIP();
-			serverIP = serverIP.substring(7);
-			JedisPool redisPool = new JedisPool(serverIP, 6379);
-			return redisPool.getResource();
-		}
-		catch (Exception e){
-			log.error("Error in PollApplication.dbConnect()");
-		}
- 		return null;
-    }
-	
+			
 	public void destroyPolls(String name){
 		// Destroy polls that were created in the room
 		Jedis jedis = dbConnect();
@@ -149,7 +134,7 @@ public class PollApplication {
 	public ArrayList titleList()
 	{
 		PollInvoker pollInvoker = new PollInvoker();
-		ArrayList titles = pollInvoker.titleList(); 
+		ArrayList titles = pollInvoker.titleList();
 		return titles;
 	}
 	
@@ -191,7 +176,23 @@ public class PollApplication {
 		return nextIndex;
 	}
 	
-    private String getLocalIP()
+	public static Jedis dbConnect(){
+		String serverIP = "127.0.0.1";
+		//String serverIP = getLocalIP();
+		//serverIP = serverIP.substring(7);
+		JedisPool redisPool = new JedisPool(serverIP, 6379);
+		try{
+			return redisPool.getResource();
+		}
+		catch (Exception e){
+			log.error("Error in PollApplication.dbConnect():");
+			log.error(e.toString());
+		}
+		log.error("Returning NULL from dbConnect()");
+		return null;
+	}
+	
+    private static String getLocalIP()
     {
     	File parseFile = new File(BBB_FILE);
     	try{    		
@@ -200,8 +201,9 @@ public class PollApplication {
     		String serverAddress = "";
     		while (!found && scanner.hasNextLine()){
     			serverAddress = processLine(scanner.nextLine());
-    			if (!serverAddress.equals(""))
+    			if (!serverAddress.equals("")){
     				found = true;
+    			}
     		}
     		scanner.close();
     		return serverAddress;
@@ -212,8 +214,7 @@ public class PollApplication {
     	return null;
     }
     
-    
-    private String processLine(String line){
+    private static String processLine(String line){
     	//use a second Scanner to parse the content of each line 
         Scanner scanner = new Scanner(line);
         scanner.useDelimiter("=");
@@ -223,9 +224,6 @@ public class PollApplication {
         		String value = scanner.next();
         		return value;
         	}
-        }
-        else {
-        	log.error("Error in processing server address from " + BBB_FILE);
         }
         return "";
     }

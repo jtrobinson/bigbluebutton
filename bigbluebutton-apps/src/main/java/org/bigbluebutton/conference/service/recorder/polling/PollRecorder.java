@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import org.bigbluebutton.conference.service.poll.Poll;
+import org.bigbluebutton.conference.service.poll.PollApplication;
 
 public class PollRecorder {
         private static Logger log = Red5LoggerFactory.getLogger( PollRecorder.class, "bigbluebutton");
@@ -41,25 +42,6 @@ public class PollRecorder {
          public PollRecorder() {
         	 super();
          }
-
-       public Jedis dbConnect(){
-     	   	// Reads IP from Java, for portability
-     	       String serverIP = "INVALID IP";
-     	       try
-     	       {
-     	       	InetAddress addr = InetAddress.getLocalHost();
-     	           // Get hostname
-     	           String hostname = addr.getHostName();
-     	           serverIP = hostname;
-     	       } 
-     	       catch (Exception e)
-     	       {
-     	    	   log.error("IP capture failed.");
-     	       }
-     	       
-     	       JedisPool redisPool = new JedisPool(serverIP, 6379);
-     	       return redisPool.getResource();
-        }
          
         public JedisPool getRedisPool() {
         	 return redisPool;
@@ -70,7 +52,7 @@ public class PollRecorder {
         }
         
         public void record(Poll poll) {
-            Jedis jedis = dbConnect();
+            Jedis jedis = PollApplication.dbConnect();
             // Merges the poll title, room into a single string seperated by a hyphen
 			String pollKey = poll.room + "-" + poll.title;
 			// Saves all relevant information about the poll as fields in a hash
@@ -107,12 +89,12 @@ public class PollRecorder {
         }
         
         public void setStatus(String pollKey, Boolean status){
-        	Jedis jedis = dbConnect();
+        	Jedis jedis = PollApplication.dbConnect();
         	jedis.hset(pollKey, "status", status.toString());
         }
         
         public void vote(String pollKey, Poll poll, Object[] answerIDs, Boolean webVote){
-        	Jedis jedis = dbConnect();
+        	Jedis jedis = PollApplication.dbConnect();
         	for (int i = 0; i < answerIDs.length; i++){
 	    		// Extract  the index value stored at element i of answerIDs
         		Integer index = Integer.parseInt(answerIDs[i].toString()) + 1;

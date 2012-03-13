@@ -106,6 +106,7 @@ package org.bigbluebutton.modules.polling.managers
 		      viewWindowManager.handleClosePollingViewWindow(e);
 		      toolbarButtonManager.enableToolbarButton();
 		}  	
+		
 	  // Stop polling, close all viewer's poll windows, and delete the web key if the poll in question has been published to the web	
 	  public function handleStopPolling(e:StopPollEvent):void{
 		  if (e.poll.publishToWeb){

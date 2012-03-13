@@ -46,6 +46,7 @@
 		import org.bigbluebutton.modules.polling.events.SavePollEvent;
 		import org.bigbluebutton.modules.polling.events.PublishPollEvent;
 		import org.bigbluebutton.modules.polling.events.GenerateWebKeyEvent;
+		
 		import org.bigbluebutton.modules.chat.events.SendPublicChatMessageEvent;
 			
 		import org.bigbluebutton.modules.polling.model.PollObject;
@@ -79,9 +80,12 @@
 		[Bindable]public var reviewing:Boolean = false;
 		private var POLL_URL_COLOUR:String = "35071";
 		private var webClosed:Boolean;
+		private var notified:Boolean;
 
 		private function init():void{
-			webPollText.visible = (!reviewing && trackingPoll.publishToWeb);
+			conference = UserManager.getInstance().getConference();
+			webPollText.visible = (conference.amIPresenter() && (!reviewing && trackingPoll.publishToWeb));
+			btnClosePoll.visible = conference.amIPresenter();
 			webPollBox.visible = webPollText.visible; 
 			if (webPollText.visible){
 				webClosed = false;
@@ -89,23 +93,34 @@
 				generate.poll = trackingPoll;
 				dispatchEvent(generate);
 			}
+			notified = false;
 		}
-0
+
 		private function onCreationComplete():void{
-			conference = UserManager.getInstance().getConference();
+			
+			//conference.amIPresenter()
+			
 			// If the statistics window is being opened to view a poll that has been published and closed, the interface will 
 			// immediately appear with only the option to close the window. 
 			if(viewingClosedPoll)
 				stopPoll();
-			if (webPollText.visible){
-				webPollURLBox.text = webPollUrl;
-				var chatMessage:SendPublicChatMessageEvent = new SendPublicChatMessageEvent(SendPublicChatMessageEvent.SEND_PUBLIC_CHAT_MESSAGE_EVENT);
-				chatMessage.message = trackingPoll.title + " is available online at " + webPollUrl;
-				chatMessage.time = "";
-				chatMessage.color = POLL_URL_COLOUR.toString();
-				chatMessage.language = ResourceUtil.getInstance().getCurrentLanguageCode().split("_")[0];
-				dispatchEvent(chatMessage);
+			
+			if (conference.amIPresenter()){
+				messageForRecording("A poll is open for voting.");
+				messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.createPoll.title') + " " + trackingPoll.title);
+				messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.createPoll.question') + " " + trackingPoll.question);
+				messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.createPoll.answers'));
+				for (var i:int = 0; i < trackingPoll.answers.length; i++){
+					messageForRecording("- " + trackingPoll.answers[i]);
+				}
 			}
+			
+			if (webPollText.visible){  
+				webPollURLBox.text = webPollUrl;
+				if (conference.amIPresenter())
+					messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.stats.webPollURL') + " " + webPollUrl);
+			}
+						
 			answers = trackingPoll.answers;
 			question = trackingPoll.question;
 			var lines:int = (question.length / 28) + 1;
@@ -115,6 +130,17 @@
 			height = height + ((lines+1) * 45);
 			createResultsTable(answers.length, answers);
 		}			
+
+		// About to change recording
+		private function messageForRecording(message:String):void{
+			LogUtil.debug("Entering messageForRecording");
+			var chatMessage:SendPublicChatMessageEvent = new SendPublicChatMessageEvent(SendPublicChatMessageEvent.SEND_PUBLIC_CHAT_MESSAGE_EVENT);							
+			chatMessage.message = message;
+			chatMessage.time = "";
+			chatMessage.color = POLL_URL_COLOUR.toString();
+			chatMessage.language = ResourceUtil.getInstance().getCurrentLanguageCode().split("_")[0];
+			dispatchEvent(chatMessage);
+		}
 
 		public function getPrefferedPosition():String{
 			return MainCanvas.POPUP;
@@ -141,21 +167,36 @@
  		
  		private function stopPoll():void{
  			refreshPoll();
+ 			btnRefreshResults.visible = conference.amIPresenter();
  			btnRefreshResults.label = ResourceUtil.getInstance().getString('bbb.polling.stats.repost');
 			btnRefreshResults.removeEventListener(MouseEvent.CLICK, refreshWindow);
 			btnRefreshResults.addEventListener(MouseEvent.CLICK, publishPollAgain);
+			
 			btnClosePoll.label = ResourceUtil.getInstance().getString('bbb.polling.stats.close');
 			btnClosePoll.removeEventListener(MouseEvent.CLICK, closeWindow);
 			btnClosePoll.addEventListener(MouseEvent.CLICK, closeButtonClick); 
 			trackingPoll.status = false;
 			if (webPollText.visible && !webClosed){
 				webClosed = true;
-				var chatMessage:SendPublicChatMessageEvent = new SendPublicChatMessageEvent(SendPublicChatMessageEvent.SEND_PUBLIC_CHAT_MESSAGE_EVENT);
-				chatMessage.message = "Web polling has been closed for " + trackingPoll.title;
-				chatMessage.time = "";
-				chatMessage.color = POLL_URL_COLOUR.toString();
-				chatMessage.language = ResourceUtil.getInstance().getCurrentLanguageCode().split("_")[0];
-				dispatchEvent(chatMessage);
+				messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.webPollClosed'));
+			}
+			if (!notified){
+				var percentage:int;
+				var totalVotes:int = 0;
+				for (var n:int = 0; n < trackingPoll.votes.length; n++){
+					totalVotes+= int(trackingPoll.votes[n]);
+				}
+				messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.pollClosed'));				
+				for (var i:int = 0; i < trackingPoll.answers.length; i++){
+					if (totalVotes > 0){
+						percentage = Math.round(100*(trackingPoll.votes[i]/totalVotes));
+					}
+					else{
+						percentage = 0;
+					}
+					messageForRecording(trackingPoll.answers[i] + " - " + trackingPoll.votes[i] + "/" + percentage + "%");
+				}
+				notified = true;
 			}
 			stopViewersPolls();					
 		}
@@ -285,10 +326,13 @@
        			   label="{ResourceUtil.getInstance().getString('bbb.polling.stats.refresh')}" 
        			   click="refreshPoll()" 
        			   width="100" 
-       			   height="30"/>
+       			   height="30"
+       			   visible = "true"/>
        	<mx:Button id="btnClosePoll" 
        			   label="{ResourceUtil.getInstance().getString('bbb.polling.stats.stopPoll')}" 
        			   click="stopPoll()" 
-       			   width="100" height="30"/>
+       			   width="100" 
+       			   height="30"
+       			   visible = "true"/>
 	</mx:ControlBar> 	 
 </MDIWindow>

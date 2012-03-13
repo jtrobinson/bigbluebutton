@@ -101,7 +101,8 @@ package org.bigbluebutton.modules.polling.managers
 		  
 		  public function handleReturnWebKeyEvent(e:GenerateWebKeyEvent):void
 		  {
-			  var transferURL:String = e.webHostIP + "/bigbluebutton/polls.jsp?poll=" + e.poll.webKey;			  
+		  	  var transferURL:String = e.webHostIP + "/p/" + e.poll.webKey;
+		  	  LogUtil.debug("Returning poll URL to Statistics window: " + transferURL);			  
 			  statsWindow.webPollUrl = transferURL;
 			  if (!e.repost){
 				  instructionsWindow._webKey = e.poll.webKey;

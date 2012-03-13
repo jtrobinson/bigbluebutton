@@ -345,10 +345,11 @@ package org.bigbluebutton.modules.polling.service
 					getPoll(pollKey, "initialize");
 				}
 				// This dispatch populates the titleList back in the Menu; the pollList is populated one item at a time in the for-loop
-				dispatcher.dispatchEvent(event); 
+				dispatcher.dispatchEvent(event);
 			}
 			function titleFailure(obj:Object):void{
 				LogUtil.error(LOGNAME+"Responder object failure in INITALIZE POLLING MENU NC.CALL");
+				LogUtil.error("Failure object tostring is: " + obj.toString()); 
 			}
 			//--------------------------------------//
 		 }

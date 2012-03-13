@@ -19,9 +19,12 @@
 
 package org.bigbluebutton.conference.service.recorder.polling;
 
+import java.io.File;
+import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.servlet.ServletRequest;
 
@@ -34,9 +37,14 @@ import redis.clients.jedis.JedisPool;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import org.bigbluebutton.conference.service.poll.Poll;
+import org.bigbluebutton.conference.service.poll.PollApplication;
 
 
 public class PollInvoker {
+	
+	private String BBB_FILE = "/var/lib/tomcat6/webapps/bigbluebutton/WEB-INF/classes/bigbluebutton.properties";
+	private String BBB_SERVER_FIELD = "bigbluebutton.web.serverURL";
+	
     private static Logger log = Red5LoggerFactory.getLogger( PollInvoker.class, "bigbluebutton");
     JedisPool redisPool;
 
@@ -51,30 +59,11 @@ public class PollInvoker {
    public void setRedisPool(JedisPool pool) {
    	 this.redisPool = pool;
    }
-   
-   public Jedis dbConnect(){
-	   	// Reads IP from Java, for portability
-	       String serverIP = "INVALID IP";
-	       try
-	       {
-	       	InetAddress addr = InetAddress.getLocalHost();
-	           // Get hostname
-	           String hostname = addr.getHostName();
-	           serverIP = hostname;
-	       } 
-	       catch (Exception e)
-	       {
-	    	   log.error("IP capture failed.");
-	       }
-	       JedisPool redisPool = new JedisPool(serverIP, 6379);
-	       return redisPool.getResource();
-   }
-	   
-   
+
    // The invoke method is called after already determining which poll is going to be used
    // (ie, the presenter has chosen this poll from a list and decided to use it, or it is being used immediately after creation)
    public Poll invoke(String pollKey){
-	   Jedis jedis = dbConnect();   
+	   Jedis jedis = PollApplication.dbConnect();   
        if (jedis.exists(pollKey))
        {
     	   // Get Boolean values from string-based Redis hash
@@ -127,7 +116,7 @@ public class PollInvoker {
    // Gets the ID of the current room, and returns a list of all available polls.
    public ArrayList <String> titleList()
    { 
-	   Jedis jedis = dbConnect();
+	   Jedis jedis = PollApplication.dbConnect();
        String roomName = Red5.getConnectionLocal().getScope().getName();
 	   ArrayList <String> pollTitleList = new ArrayList <String>(); 
        for (String s : jedis.keys(roomName+"*"))

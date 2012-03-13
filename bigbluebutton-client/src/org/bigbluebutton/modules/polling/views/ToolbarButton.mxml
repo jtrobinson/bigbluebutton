@@ -70,6 +70,7 @@
 			
 			// #################################################################
 			public function init():void {	
+				LogUtil.debug("Initializing Polling toolbar button.");
 				myMenuData = new ArrayCollection();
 				pollList = new ArrayCollection();			
 				listInitialize();
