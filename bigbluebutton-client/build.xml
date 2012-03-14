@@ -31,6 +31,7 @@
 	<property name="CLASSROOM_AUDIO" value="ClassroomAudioModule" />
 	<property name="SETTINGS" value="SettingsModule" />
 	<property name="VIDEO_DOCK" value="VideodockModule" />
+	<property name="POLLING" value="PollingModule" />
 	
 	<xmlproperty file="${SRC_DIR}/conf/locales.xml" collapseAttributes="true"/>
 	
@@ -169,6 +170,10 @@
 	<target name="build-chat" description="Compile Chat Module">
 		<build-module src="${SRC_DIR}" target="${CHAT}" />
 	</target>
+
+	<target name="build-polling" description="Compile Polling Module">
+		<build-module src="${SRC_DIR}" target="${POLLING}" />
+	</target>
 	
 	<target name="build-viewers" description="Compile Viewers Module">
 		<build-module src="${SRC_DIR}" target="${VIEWERS}" />
@@ -233,8 +238,8 @@
 	
 	<!-- just a grouping of modules to compile -->
 	<target name="build-main-chat-viewers-listeners-present" 
-			depends="build-bbb-main, build-bbb-main-test, build-chat, build-viewers, build-listeners, build-present, build-breakout"
-			description="Compile main, chat, viewers, listeners, present, breakout modules">
+			depends="build-bbb-main, build-bbb-main-test, build-chat, build-polling, build-viewers, build-listeners, build-present, build-breakout"
+			description="Compile main, chat, polling, viewers, listeners, present, breakout modules">
 	</target>
 	
 	<!-- just a grouping of modules to compile -->
