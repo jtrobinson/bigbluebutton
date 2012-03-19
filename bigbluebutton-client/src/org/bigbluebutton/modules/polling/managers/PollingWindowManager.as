@@ -104,6 +104,10 @@ package org.bigbluebutton.modules.polling.managers
 		  	  var transferURL:String = e.webHostIP + "/p/" + e.poll.webKey;
 		  	  LogUtil.debug("Returning poll URL to Statistics window: " + transferURL);			  
 			  statsWindow.webPollUrl = transferURL;
+
+LogUtil.debug("Returning poll URL to Statistics window: " + statsWindow.webPollUrl);
+statsWindow.setUrlBoxText();
+
 			  if (!e.repost){
 				  instructionsWindow._webKey = e.poll.webKey;
 			  }else{

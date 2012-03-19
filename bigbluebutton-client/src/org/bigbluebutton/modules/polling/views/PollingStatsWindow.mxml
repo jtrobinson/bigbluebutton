@@ -116,9 +116,13 @@
 			}
 			
 			if (webPollText.visible){  
-				webPollURLBox.text = webPollUrl;
-				if (conference.amIPresenter())
-					messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.stats.webPollURL') + " " + webPollUrl);
+
+LogUtil.debug("webPollURL is : " + webPollUrl);
+LogUtil.debug("webkey is : " + trackingPoll);
+				//webPollURLBox.text = webPollUrl;
+LogUtil.debug("webPollURLBox.Text is : " + webPollURLBox.text);
+				//if (conference.amIPresenter())
+					//messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.stats.webPollURL') + " " + webPollUrl);
 			}
 						
 			answers = trackingPoll.answers;
@@ -130,6 +134,13 @@
 			height = height + ((lines+1) * 45);
 			createResultsTable(answers.length, answers);
 		}			
+
+public function setUrlBoxText():void{
+	webPollURLBox.text = webPollUrl;
+	LogUtil.debug("webPollURLBox.Text is : " + webPollURLBox.text);
+	if (conference.amIPresenter())
+		messageForRecording(ResourceUtil.getInstance().getString('bbb.polling.stats.webPollURL') + " " + webPollUrl);
+}
 
 		// About to change recording
 		private function messageForRecording(message:String):void{
