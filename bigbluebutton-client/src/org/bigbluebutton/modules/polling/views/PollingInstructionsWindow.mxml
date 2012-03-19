@@ -239,8 +239,10 @@ title="{ResourceUtil.getInstance().getString('bbb.polling.createPoll')}">
 			var errMsg:String = "VALID";
 			var answersArray:Array;
 			var valid:Boolean=true;
-			answersArray = pollAnswers.text.split("\r"); // splitting by '*' and new line, thus user can type '*' anywhere except the newline
-			//answersArray[0] = answersArray[0].split('*').join(''); // As after split '*' is not displayed we need to take off from first element which is not splitted
+			answersArray = pollAnswers.text.split("\r"); 
+// splitting by '*' and new line, thus user can type '*' anywhere except the newline
+			//answersArray[0] = answersArray[0].split('*').join(''); 
+// As after split '*' is not displayed we need to take off from first element which is not splitted
 			answersArray = makeAnswersPretty(answersArray);
 			// ALL THE MESSAGES NEED TO BE LOCALISED!!!!!
 			if (pollAnswers.length == 0 )
@@ -421,7 +423,7 @@ title="{ResourceUtil.getInstance().getString('bbb.polling.createPoll')}">
 					<mx:FormItem fontWeight="bold" 
 								 label="{ResourceUtil.getInstance().getString('bbb.polling.createPoll.title')}" 
 								 paddingLeft="35" 
-								 required="true">
+								 id="titleFormItem">
 						<mx:TextInput id="pollTitle" />
 						<mx:Label id="titleErrMsg" 
 								  text="" 
