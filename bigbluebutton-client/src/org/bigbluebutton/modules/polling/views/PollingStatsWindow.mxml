@@ -201,7 +201,7 @@
 					}
 					// Example of how this message will appear:
 					// "Answer one - 3 votes/73%"
-					messageForRecording(trackingPoll.answers[i] + " - " + trackingPoll.votes[i] + ResourceUtil.getInstance().getString('bbb.polling.stats.votes') + "/" + percentage + "%");
+					messageForRecording(trackingPoll.answers[i] + " - " + trackingPoll.votes[i] + " " + ResourceUtil.getInstance().getString('bbb.polling.stats.votes') + "/" + percentage + "%");
 				}
 				notified = true;
 			}

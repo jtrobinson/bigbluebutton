@@ -104,7 +104,7 @@
 						if (!pollList[i].status){
 							menuEntry.label = "X-" + menuEntry.label;
 						}else{
-							menuEntry.icon = "OpenIcon";
+							menuEntry.icon = "pollIcon";
 						}
 						myMenuData.addItem(menuEntry);
 					}
