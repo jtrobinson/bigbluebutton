@@ -133,7 +133,6 @@
 
 		// About to change recording
 		private function messageForRecording(message:String):void{
-			LogUtil.debug("Entering messageForRecording");
 			var chatMessage:SendPublicChatMessageEvent = new SendPublicChatMessageEvent(SendPublicChatMessageEvent.SEND_PUBLIC_CHAT_MESSAGE_EVENT);							
 			chatMessage.message = message;
 			chatMessage.time = "";
