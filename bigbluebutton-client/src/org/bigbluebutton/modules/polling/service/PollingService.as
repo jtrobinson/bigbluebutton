@@ -102,7 +102,9 @@ package org.bigbluebutton.modules.polling.service
          // Dealing with PollingViewWindow
         /*#######################################################*/
         public function sharePollingWindow(poll:PollObject):void{
+   LogUtil.debug("isConnected is " + isConnected.toString().toUpperCase());
         	if (isConnected = true ) {
+   LogUtil.debug("isConnected is " + isConnected.toString().toUpperCase() + ", deploying sharedObject");
           		pollingSO.send("openPollingWindow", buildServerPoll(poll));
         	}
         }
