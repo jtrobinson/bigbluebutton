@@ -21,7 +21,7 @@
 -->
 
 <MDIWindow xmlns="flexlib.mdi.containers.*" xmlns:mx="http://www.adobe.com/2006/mxml" 
-	width="310" height="150" 
+	width="410" height="150" 
 	xmlns:mate="http://mate.asfusion.com/" 
 	implements="org.bigbluebutton.common.IBbbModuleWindow" 
 	creationComplete="onCreationComplete()"
@@ -65,7 +65,7 @@
 			private var _userid:Number; 
 			private var window:PollingViewWindow;	
 			private var submissionAllowed:Boolean=false;		
-			public var cbSelected:Array = new Array(); // variable that receives either CheckBox or ReadioButton info and sends it to VoteEvent
+			public var cbSelected:Array = new Array(); // variable that receives either CheckBox or RadioButton info and sends it to VoteEvent
 			
 			public function getPrefferedPosition():String{
 				return MainCanvas.POPUP;
@@ -76,6 +76,10 @@
 			}
  			 
 			private function onCreationComplete():void{
+				if (isMultiple)
+					errorMessage.text = ResourceUtil.getInstance().getString('bbb.polling.vote.error.check');
+				else
+					errorMessage.text = ResourceUtil.getInstance().getString('bbb.polling.vote.error.radio');
 				checkInstructions.visible = isMultiple;
 				createButtons(answers.length,answers);
 				invalidateDisplayList();
@@ -120,6 +124,7 @@
 				 		_rb.groupName = "answersGroup";
 				 		_rb.name = content[i].toString(); // giving button a name of array elelment to process it easier later
 				 		_rb.id = "answers"+i;
+						_rb.addEventListener(MouseEvent.CLICK, radioClick);
 				 		_hb.addChild(_rb);
 			 		}    
 			 		_hb.addChild(_tx); // adding text near button			 
@@ -128,7 +133,7 @@
 			} // end of function createButtons
 						
 			private function Vote():void{
-				if (!isMultiple || submissionAllowed){
+				if (submissionAllowed){
 					var voteEvent: VoteEvent = new VoteEvent(VoteEvent.START);
 					if (isMultiple){
 						// Checkboxes
@@ -143,6 +148,8 @@
 					dispatchEvent(voteEvent);				
 					closeWindow();
 				}
+				else
+					errorMessage.visible = true;
 			} // _vote
 						
 			// As the user clicks CheckBoxes, this function keeps a running tally of which boxes are and are not selected
@@ -165,6 +172,10 @@
 				}
 				submissionAllowed = (cbSelected.length > 0);
 			}
+
+			public function radioClick(e:Event):void{
+				submissionAllowed = true;
+			}
 		]]>
 	</mx:Script>
 
@@ -186,6 +197,9 @@
      	<mx:Box id="answerBox"  
      			width="90%" 
      			height="90%" />
+		<mx:Text id="errorMessage"
+				 color="red"
+				 visible="false"/>
 	</mx:VBox>
     <mx:ControlBar width="100%" 
     			   horizontalAlign="center">
