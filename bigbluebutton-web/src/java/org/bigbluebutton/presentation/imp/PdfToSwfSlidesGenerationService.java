@@ -123,14 +123,25 @@ public class PdfToSwfSlidesGenerationService {
 			tasks.add(task);
 			completionService.submit(c);
 		}		
+<<<<<<< HEAD
 					       		
+=======
+		
+		int slidesCompleted = 0;
+		
+>>>>>>> upstream/master
 		for (final PdfToSwfSlide slide : slides) {
 			Future<PdfToSwfSlide> future = null;
 			try {
 				future = completionService.poll(MAXWAIT, TimeUnit.MILLISECONDS);
 				if (future != null) {
 					PdfToSwfSlide s = future.get();
+<<<<<<< HEAD
 					notifier.sendConversionUpdateMessage(s.getPageNumber(), pres);
+=======
+					slidesCompleted++;
+					notifier.sendConversionUpdateMessage(slidesCompleted, pres);
+>>>>>>> upstream/master
 				} else {
 					log.info("Timedout waiting for page to finish conversion.");
 				}
@@ -144,8 +155,13 @@ public class PdfToSwfSlidesGenerationService {
 		for (final PdfToSwfSlide slide : slides) {
 			if (! slide.isDone()){
 				log.warn("Creating blank slide for " + slide.getPageNumber());
+<<<<<<< HEAD
 				slide.generateBlankSlide();
 				notifier.sendConversionUpdateMessage(slide.getPageNumber(), pres);
+=======
+				slide.generateBlankSlide();				
+				notifier.sendConversionUpdateMessage(slidesCompleted++, pres);
+>>>>>>> upstream/master
 			}	
 		}
 	}
