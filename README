@@ -3,8 +3,8 @@
 To install polling module:
 -Open ~/dev/bigbluebutton/bigbluebutton-client/src/conf/config.xml, and add
 		<module name="PollingModule" url="PollingModule.swf?v=3809" 
-			uri="rtmp://142.204.133.24/bigbluebutton" 
-			host="http://142.204.133.24" 
+			uri="rtmp://<SERVER IP>/bigbluebutton" 
+			host="http://<SERVER IP>" 
 			dependsOn="ViewersModule"
 		/>
 -Go to ~/dev/bigbluebutton and execute install-web-polling.sh
