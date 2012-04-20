@@ -193,8 +193,12 @@ package org.bigbluebutton.modules.polling.managers
 
 		  // Make a call to the service to update the list of titles and statuses for the Polling Menu
 		  public function handleInitializePollMenuEvent(e:PollGetTitlesEvent):void{
-			  toolbarButtonManager.button.roomID = module.getRoom();
-			  service.initializePollingMenu(module.getRoom());
+			  if (module.getRoom() != null){
+				  toolbarButtonManager.button.roomID = module.getRoom();
+				  service.initializePollingMenu(module.getRoom());
+			  }
+			  else
+				  LogUtil.debug("ERROR: module.getroom is null");
 		  }
 		  
 		  public function handleUpdateTitlesEvent(e:PollGetTitlesEvent):void{

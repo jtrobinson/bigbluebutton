@@ -56,7 +56,7 @@
 			
 			private var images:Images = new Images();
 			
-			[Bindable] private var myMenuData:ArrayCollection;
+			[Bindable] private var myMenuData:ArrayCollection = new ArrayCollection();
 			
 			[Bindable] 
 			[Embed(source="../../../common/assets/images/poll_icon.png")]  
@@ -64,7 +64,7 @@
 						
 			public static const LOGNAME:String = "[Polling (views) : ToolbarButton] ";
 			
-			[Bindable] public var roomID:String;
+			[Bindable] public var roomID:String = new String;
 			[Bindable] public var titleList:Array;
 			[Bindable] public var pollList:ArrayCollection;
 			
